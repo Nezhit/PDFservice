@@ -1,6 +1,7 @@
 package com.example.CodeInside.configs;
 
 import com.example.CodeInside.models.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +15,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -37,7 +39,7 @@ public class WebSecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/home").permitAll()
                         .requestMatchers("/api/auth/signin").permitAll()
@@ -50,17 +52,27 @@ public class WebSecurityConfig {
                         .permitAll()
                 )
 
-                .userDetailsService(userDetailsService)
-                .logout((logout) -> logout.permitAll());
 
+                .logout((logout) -> logout.permitAll())
+                .authenticationProvider(daoAuthenticationProvider());
 
         return http.build();
     }
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider(){
+        DaoAuthenticationProvider daoAuthenticationProvider=new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+        return daoAuthenticationProvider;
+    }
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
 
 

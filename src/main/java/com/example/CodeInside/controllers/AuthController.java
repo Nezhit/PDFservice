@@ -58,7 +58,7 @@ public class AuthController {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
-        System.out.println("Все хорошо!");
+        System.out.println("Все хорошо");
 //
 //        return ResponseEntity.ok( String.format("Id: %d, Username: %s, Email: %s, Roles: %s",
 //                userDetails.getId(),
