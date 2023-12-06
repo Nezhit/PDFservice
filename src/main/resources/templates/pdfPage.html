@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF Viewer</title>
+</head>
+<body>
+
+<div th:if="${pdfError}" style="color: red;">
+    <p th:text="${pdfError}"></p>
+</div>
+
+<div th:unless="${pdfError}">
+    <img th:src="@{data:image/jpg;base64,${#strings.toHexString(#bytes.encodeBase64(image))}}"
+         th:alt="'Page ' + ${pageNumber}" />
+</div>
+
+</body>
+</html>
