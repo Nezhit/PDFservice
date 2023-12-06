@@ -2,7 +2,7 @@ package com.example.CodeInside.controllers;
 
 import com.example.CodeInside.models.Role;
 import com.example.CodeInside.models.User;
-import com.example.CodeInside.models.UserDetailsImpl;
+import com.example.CodeInside.service.UserDetailsImpl;
 import com.example.CodeInside.models.enums.ERole;
 import com.example.CodeInside.pojo.LoginRequest;
 import com.example.CodeInside.pojo.MessageResponse;
@@ -10,7 +10,6 @@ import com.example.CodeInside.pojo.SignupRequest;
 import com.example.CodeInside.repos.RoleRepo;
 import com.example.CodeInside.repos.UserRepo;
 import jakarta.transaction.Transactional;
-import org.apache.logging.log4j.message.StringFormattedMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;

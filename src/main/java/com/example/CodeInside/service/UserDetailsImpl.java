@@ -1,12 +1,10 @@
-package com.example.CodeInside.models;
+package com.example.CodeInside.service;
 
+import com.example.CodeInside.models.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Collection;
 import java.util.List;

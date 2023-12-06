@@ -27,7 +27,8 @@ public class User {
             joinColumns = @JoinColumn(name="user_id"),
             inverseJoinColumns = @JoinColumn(name="role_id"))
     private Set<Role> roles=new HashSet<>();
-
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Bookshelf> bookshelves = new HashSet<>();
     public User() {
     }
 

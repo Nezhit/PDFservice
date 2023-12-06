@@ -1,4 +1,5 @@
-package com.example.CodeInside.models;
+package com.example.CodeInside.service;
+import com.example.CodeInside.models.User;
 import com.example.CodeInside.repos.UserRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
