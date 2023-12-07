@@ -3,6 +3,7 @@ package com.example.CodeInside.controllers;
 import com.example.CodeInside.models.Book;
 import com.example.CodeInside.models.Bookshelf;
 import com.example.CodeInside.models.User;
+import com.example.CodeInside.pojo.AssertBookandShelf;
 import com.example.CodeInside.pojo.BookshelfCreation;
 import com.example.CodeInside.service.BookService;
 import com.example.CodeInside.service.BookshelfService;
@@ -16,7 +17,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class LibraryController {
@@ -31,14 +35,27 @@ public class LibraryController {
 
     @GetMapping("/library")
     public String getLibrary(Model model){
-//        List<Book> booksNoShelf=bookService.getNoShelfBooks();
-//        model.addAttribute("booksNoShelf",booksNoShelf);
-//        List<Book> booksWithShelf=bookService.getBooksWithShell();
-//        model.addAttribute("booksWithShelf",booksWithShelf);
-        List<Book>books=bookService.getAll();
-        model.addAttribute("books",books);
-        List<Bookshelf> shelves=bookshelfService.getAll();
-        model.addAttribute("shelves",shelves);
+        List<Book> allBooks = bookService.getAll();
+        model.addAttribute("allBooks", allBooks);
+
+        List<Bookshelf> shelves = bookshelfService.getAll();
+        model.addAttribute("shelves", shelves);
+
+        // Map to store bookshelf IDs for each book
+        Map<Long, Long> bookshelfMap = new HashMap<>();
+        for (Book book : allBooks) {
+            if (book.getBookshelf() != null) {
+                bookshelfMap.put(book.getId(), book.getBookshelf().getId());
+            }
+        }
+        model.addAttribute("bookshelfMap", bookshelfMap);
+
+        // Filter out books that are already on shelves
+        List<Book> booksNotOnShelves = allBooks.stream()
+                .filter(book -> book.getBookshelf() == null)
+                .collect(Collectors.toList());
+        model.addAttribute("booksNotOnShelves", booksNotOnShelves);
+
         return "library";
     }
     @GetMapping("/createshelf")
@@ -54,4 +71,11 @@ public class LibraryController {
 
         return bookshelfService.createShelf(bookshelfCreation,user);
     }
+    @PostMapping("/assert")
+    public ResponseEntity<String > assertBookwithShelves(@RequestBody AssertBookandShelf assertBookandShelf){
+
+        return bookshelfService.assertBookandShelf(assertBookandShelf);
+
+    }
+
 }
