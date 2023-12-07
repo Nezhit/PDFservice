@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Viewer</title>
+  <style>
+        #pdf-container {
+            width: 100%;
+            height: 600px;
+            overflow: hidden;
+        }
+
+        #navigation-buttons {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div id="pdf-container"></div>
+<div id="navigation-buttons">
+  <button onclick="loadPage('previous')">Предыдущая страница</button>
+  <button onclick="loadPage('next')">Следующая страница</button>
+</div>
+
+<script>
+        let currentPage = 1;
+        const pdfContainer = document.getElementById('pdf-container');
+
+        function loadPage(direction) {
+            if (direction === 'previous') {
+                currentPage = Math.max(1, currentPage - 1);
+            } else {
+                currentPage += 1;
+            }
+
+            fetch(`/pdf/${currentPage}`)
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    pdfContainer.innerHTML = `<embed src="${url}" type="application/pdf" width="100%" height="100%">`;
+                })
+                .catch(error => console.error('Error loading PDF:', error));
+        }
+
+        // Load initial page
+        loadPage('current');
+    </script>
+</body>
+</html>

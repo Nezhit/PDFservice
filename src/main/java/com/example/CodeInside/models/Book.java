@@ -15,11 +15,20 @@ public class Book {
 
     private String title;
     private String author;
+    private String filePath;
 
     @Column(name = "reading_progress")
     private int readingProgress; // Прогресс чтения (номер страницы)
 
     public Book() {
+    }
+
+    public Book(Bookshelf bookshelf, String title, String author, String filePath, int readingProgress) {
+        this.bookshelf = bookshelf;
+        this.title = title;
+        this.author = author;
+        this.filePath = filePath;
+        this.readingProgress = readingProgress;
     }
 
     public Book(Bookshelf bookshelf, String title, String author, int readingProgress) {
@@ -29,12 +38,21 @@ public class Book {
         this.readingProgress = readingProgress;
     }
 
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
     public Bookshelf getBookshelf() {
