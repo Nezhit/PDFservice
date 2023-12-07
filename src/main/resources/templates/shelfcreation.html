@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Shelf</title>
+</head>
+<body>
+<h1>Create Shelf</h1>
+
+<form id="createShelfForm">
+    <label for="shelfName">Shelf Name:</label>
+    <input type="text" id="shelfName" name="shelfName" required>
+
+    <button type="button" onclick="createShelf()">Create Shelf</button>
+</form>
+
+<script>
+        function createShelf() {
+            const shelfName = document.getElementById('shelfName').value;
+
+            const requestBody = {
+                name: shelfName
+            };
+
+            fetch('/createshelf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('Failed to create shelf');
+                }
+            })
+            .then(data => {
+                console.log(data);
+                alert('Shelf created successfully!');
+            })
+            .catch(error => {
+                console.error(error);
+                alert('Failed to create shelf');
+            });
+        }
+    </script>
+</body>
+</html>

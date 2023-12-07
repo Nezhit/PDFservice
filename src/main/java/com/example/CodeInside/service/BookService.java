@@ -1,11 +1,15 @@
 package com.example.CodeInside.service;
 
 import com.example.CodeInside.models.Book;
+import com.example.CodeInside.pojo.BookshelfCreation;
 import com.example.CodeInside.repos.BookRepo;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +18,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class BookService {
     @Value("${upload.dir}")
@@ -25,7 +32,8 @@ public class BookService {
     }
 
     // @Async
-   public void processBookAsync(InputStream inputStream) {
+   public void processBookAsync(MultipartFile file) throws IOException {
+        InputStream inputStream=file.getInputStream();
        try (PDDocument document = PDDocument.load(inputStream)) {
                 Book book=new Book();
 
@@ -44,12 +52,11 @@ public class BookService {
                    }
                }
 
-               System.out.println(filePath);
+
 
                document.save(filePath.toString());
                 book.setFilePath(filePath.toString());
-                book.setTitle(document.getDocumentInformation().getTitle());
-           System.out.println("TITLE= "+document.getDocumentInformation().getTitle());
+                book.setTitle(file.getOriginalFilename());
                 book.setAuthor(document.getDocumentInformation().getAuthor());
                 book.setReadingProgress(1);
                 bookRepo.save(book);
@@ -59,5 +66,22 @@ public class BookService {
            System.out.println("ЗАВЕРШЕНО В СЕРВИСЕ");
        }
    }
+   public List<Book> getNoShelfBooks(){
+        List<Book>books=bookRepo.findAll();
+       List<Book> filteredBooks = books.stream()
+               .filter(book -> book.getBookshelf() == null)
+               .toList();
+        return filteredBooks;
+   }
+    public List<Book> getBooksWithShell(){
+        List<Book>books=bookRepo.findAll();
+        List<Book> filteredBooks = books.stream()
+                .filter(book -> book.getBookshelf() != null)
+                .toList();
+        return filteredBooks;
+    }
+    public List<Book> getAll(){
+        return bookRepo.findAll();
+    }
 
 }

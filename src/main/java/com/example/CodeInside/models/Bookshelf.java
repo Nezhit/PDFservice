@@ -16,23 +16,41 @@ public class Bookshelf {
     @JoinColumn(name = "user_id")
     private User user;
 
+    private String name;
     @OneToMany(mappedBy = "bookshelf", cascade = CascadeType.ALL)
     private Set<Book> books = new HashSet<>();
 
     public Bookshelf() {
     }
 
+    public Bookshelf(User user, String name) {
+        this.user = user;
+        this.name = name;
+    }
+
     public Bookshelf(User user, Set<Book> books) {
         this.user = user;
         this.books = books;
     }
-
+    public Bookshelf(User user, Set<Book> books,String name) {
+        this.user = user;
+        this.books = books;
+        this.name=name;
+    }
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public User getUser() {

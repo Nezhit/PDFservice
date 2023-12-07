@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library</title>
+    <style>
+        .draggable-container {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+        }
+
+        .draggable {
+            width: 100px; /* Задайте желаемую ширину */
+            height: 100px; /* Задайте желаемую высоту */
+            border: 1px solid #ddd;
+            margin: 10px;
+            cursor: move;
+            overflow: hidden;
+        }
+
+        .shelf {
+            width: 150px; /* Задайте желаемую ширину полки */
+            height: 200px; /* Задайте желаемую высоту полки */
+            border: 2px dashed #333;
+            margin: 10px;
+            padding: 10px;
+            display: inline-block;
+            position: relative;
+        }
+
+    </style>
+</head>
+<body>
+<h1>Library</h1>
+
+<div class="draggable-container">
+    <div th:each="book : ${books}" th:id="'book-' + ${book.id}" class="draggable">
+        <p th:text="${book.title + ' by ' + book.author}"></p>
+    </div>
+</div>
+
+<div class="draggable-container">
+    <div th:each="shelf : ${shelves}" th:id="'shelf-' + ${shelf.id}" class="shelf" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <p th:text="${shelf.name}"></p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        makeElementsDraggable();
+    });
+
+    function makeElementsDraggable() {
+        const draggableElements = document.querySelectorAll('.draggable');
+        draggableElements.forEach(element => {
+            element.draggable = true;
+
+            element.addEventListener('dragstart', function (e) {
+                e.dataTransfer.setData('text/plain', element.id);
+            });
+        });
+    }
+
+    function allowDrop(event) {
+        event.preventDefault();
+    }
+
+    function drop(event) {
+        event.preventDefault();
+        const droppedElementId = event.dataTransfer.getData('text/plain');
+        const droppedElement = document.getElementById(droppedElementId);
+        const targetElement = event.target;
+
+        // Check if the drop target is a valid drop zone
+        if (targetElement.classList.contains('shelf')) {
+            // Move the dropped element to the target element
+            targetElement.appendChild(droppedElement);
+        }
+    }
+</script>
+</body>
+</html>

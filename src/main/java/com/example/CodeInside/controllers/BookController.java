@@ -40,64 +40,7 @@ public class BookController {
     }
 
 
-    @GetMapping("/showpdf/{pageNumber}")
-    public ResponseEntity<?> showPdfPage2(@PathVariable int pageNumber, Model model) {
-        byte[] imageData = new byte[0];
-        try {
-            // Загрузка PDF файла по URL
-            File file = new File("D:\\CodeInside\\src\\main\\resources\\static\\KursovoyFinalEnd.pdf");
 
-            // Используем PDFBox для отображения PDF
-            PDDocument document = PDDocument.load(file);
-
-            // Проверяем, что запрашиваемая страница существует
-            int numberOfPages = document.getNumberOfPages();
-            if (pageNumber < 1 || pageNumber > numberOfPages) {
-                throw new IllegalArgumentException("Некорректный номер страницы");
-            }
-
-
-            //Instantiating the PDFRenderer class
-            PDFRenderer renderer = new PDFRenderer(document);
-
-
-            //Rendering an image from the PDF document
-            BufferedImage image = renderer.renderImage(pageNumber, 2F);
-
-
-
-            //Writing the image to a file
-            ImageIO.write(image, "PNG", new File("D:\\CodeInside\\src\\main\\resources\\static\\myimage.png"));
-
-            System.out.println("Image created");
-
-            //Closing the document
-            document.close();
-
-            // Преобразование изображения в формат JPEG и запись в ByteArrayOutputStream
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", baos);
-            baos.flush();
-            imageData = baos.toByteArray();
-
-            // Конвертация байтового массива в строку Base64
-            byte[] imageBytes = baos.toByteArray();
-            String base64Image = Base64.getEncoder().encodeToString(imageBytes);
-            baos.close();
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            }
-        ByteArrayResource resource = new ByteArrayResource(imageData);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_PNG);
-        headers.setContentLength(imageData.length);
-        // Установите другие заголовки, если необходимо
-
-        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
-    }
     @GetMapping("/upload")
     public String getUploadPage(){
         return "uploadBook";
@@ -107,9 +50,9 @@ public class BookController {
     public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) {
         try {
             // Получение InputStream из MultipartFile
-            InputStream inputStream = file.getInputStream();
+            //InputStream inputStream = file.getInputStream();
 
-            bookService.processBookAsync(inputStream);
+            bookService.processBookAsync(file);
             System.out.println("ЗАВЕРШЕНО В КОНТРОЛЛЕРЕ");
             return ResponseEntity.ok("Файл успешно загружен");
         } catch (IOException e) {
@@ -165,5 +108,63 @@ public class BookController {
 
 
     }
+//    @GetMapping("/showpdf/{pageNumber}")
+//    public ResponseEntity<?> showPdfPage2(@PathVariable int pageNumber, Model model) {
+//        byte[] imageData = new byte[0];
+//        try {
+//            // Загрузка PDF файла по URL
+//            File file = new File("D:\\CodeInside\\src\\main\\resources\\static\\KursovoyFinalEnd.pdf");
+//
+//            // Используем PDFBox для отображения PDF
+//            PDDocument document = PDDocument.load(file);
+//
+//            // Проверяем, что запрашиваемая страница существует
+//            int numberOfPages = document.getNumberOfPages();
+//            if (pageNumber < 1 || pageNumber > numberOfPages) {
+//                throw new IllegalArgumentException("Некорректный номер страницы");
+//            }
+//
+//
+//            //Instantiating the PDFRenderer class
+//            PDFRenderer renderer = new PDFRenderer(document);
+//
+//
+//            //Rendering an image from the PDF document
+//            BufferedImage image = renderer.renderImage(pageNumber, 2F);
+//
+//
+//
+//            //Writing the image to a file
+//            ImageIO.write(image, "PNG", new File("D:\\CodeInside\\src\\main\\resources\\static\\myimage.png"));
+//
+//            System.out.println("Image created");
+//
+//            //Closing the document
+//            document.close();
+//
+//            // Преобразование изображения в формат JPEG и запись в ByteArrayOutputStream
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            ImageIO.write(image, "png", baos);
+//            baos.flush();
+//            imageData = baos.toByteArray();
+//
+//            // Конвертация байтового массива в строку Base64
+//            byte[] imageBytes = baos.toByteArray();
+//            String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+//            baos.close();
+//
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        ByteArrayResource resource = new ByteArrayResource(imageData);
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.IMAGE_PNG);
+//        headers.setContentLength(imageData.length);
+//        // Установите другие заголовки, если необходимо
+//
+//        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+//    }
 
 }
