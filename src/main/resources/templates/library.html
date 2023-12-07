@@ -20,13 +20,21 @@
             overflow: hidden;
         }
 
+        .shelves-container {
+            display: flex;
+            flex-direction: column; /* Располагаем полки вертикально */
+            align-items: flex-start; /* Выравниваем по левому краю */
+            height: 100vh; /* Занимаем 100% высоты окна просмотра */
+        }
+
         .shelf {
-            width: 150px; /* Задайте желаемую ширину полки */
+            display: flex; /* Располагаем книги горизонтально на полке */
+            flex-wrap: nowrap;
+            width: 100%; /* Занимаем 100% ширины полки */
             height: 200px; /* Задайте желаемую высоту полки */
             border: 2px dashed #333;
             margin: 10px;
             padding: 10px;
-            display: inline-block;
             position: relative;
         }
 
@@ -41,7 +49,7 @@
     </div>
 </div>
 
-<div class="draggable-container">
+<div class="shelves-container">
     <div th:each="shelf : ${shelves}" th:id="'shelf-' + ${shelf.id}" class="shelf" ondrop="drop(event)" ondragover="allowDrop(event)">
         <p th:text="${shelf.name}"></p>
     </div>
