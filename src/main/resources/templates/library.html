@@ -51,7 +51,7 @@
     <div th:each="shelf : ${shelves}" th:id="'shelf-' + ${shelf.id}" class="shelf" ondrop="drop(event)" ondragover="allowDrop(event)">
         <p th:text="${shelf.name}"></p>
         <div th:each="book : ${allBooks}" th:if="${bookshelfMap[book.id] == shelf.id}">
-            <div th:id="'book-' + ${book.id}" class="draggable">
+            <div th:id="'book-' + ${book.id}" class="draggable" ondblclick="redirectToPdf(this)">
                 <p th:text="${book.title + ' by ' + book.author}"></p>
             </div>
         </div>
@@ -60,7 +60,8 @@
 
 
 
-<script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
     document.addEventListener('DOMContentLoaded', function () {
         makeElementsDraggable();
     });
@@ -106,7 +107,10 @@
     // Check if there is a match and return the numeric part
     return match ? match[1] : null;
 }
-
+    function redirectToPdf(element) {
+        const bookId = extractId(element.id);
+        window.location.href = '/pdf/' + bookId;
+    }
     function sendPostRequest(bookId, shelfId) {
         alert(bookId,shelfId);
         fetch('/assert', {
@@ -129,6 +133,7 @@
                 console.error('Error:', error);
             });
     }
+    /*]]>*/
 </script>
 </body>
 </html>

@@ -51,9 +51,7 @@ public class LibraryController {
         model.addAttribute("bookshelfMap", bookshelfMap);
 
         // Filter out books that are already on shelves
-        List<Book> booksNotOnShelves = allBooks.stream()
-                .filter(book -> book.getBookshelf() == null)
-                .collect(Collectors.toList());
+        List<Book> booksNotOnShelves = bookService.getNoShelfBooks();
         model.addAttribute("booksNotOnShelves", booksNotOnShelves);
 
         return "library";
