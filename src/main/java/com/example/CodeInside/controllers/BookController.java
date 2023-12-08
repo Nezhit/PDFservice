@@ -1,6 +1,7 @@
 package com.example.CodeInside.controllers;
 
 
+import com.example.CodeInside.models.Book;
 import com.example.CodeInside.service.BookService;
 import jakarta.annotation.Resource;
 import jakarta.persistence.criteria.Path;
@@ -62,14 +63,20 @@ public class BookController {
         }
 
     }
-    @GetMapping("/pdf")
-    public String pdfPage(){
+    @GetMapping("/pdf/{id}")
+    public String pdfPage(@PathVariable int id,Model model){
+        model.addAttribute("id",id);
+        int currentPage=bookService.getReadingProgress((long) id);
+        model.addAttribute("currentPage",currentPage);
         return "pdf";
     }
+    @GetMapping("/pdf/{bookId}/{pageNumber}")
+    public ResponseEntity<?> serveFile(@PathVariable Long bookId,@PathVariable int pageNumber) throws IOException {
+        Book book=bookService.getBookById(bookId);
 
-    @GetMapping("/pdf/{pageNumber}")
-    public ResponseEntity<?> serveFile(@PathVariable int pageNumber) throws IOException {
-        File file = new File("src/main/uploads/1701901688860.pdf");
+        //File file = new File("src/main/uploads/1701901688860.pdf");
+        File file = new File(book.getFilePath());
+       // int pageNumber=book.getReadingProgress();
         List<PDDocument> Pages = null;
         try (PDDocument document = PDDocument.load(file)) {
             Splitter splitter = new Splitter();
@@ -95,7 +102,8 @@ public class BookController {
             headers.setContentType(MediaType.APPLICATION_PDF);
             headers.setContentDisposition(ContentDisposition.builder("inline").filename("output.pdf").build());
             pd.close();
-
+            book.setReadingProgress(pageNumber);
+            bookService.saveProgress(book);
             return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
 
 
@@ -108,6 +116,48 @@ public class BookController {
 
 
     }
+
+//    @GetMapping("/pdf/{pageNumber}")
+//    public ResponseEntity<?> serveFile(@PathVariable int pageNumber) throws IOException {
+//        File file = new File("src/main/uploads/1701901688860.pdf");
+//        List<PDDocument> Pages = null;
+//        try (PDDocument document = PDDocument.load(file)) {
+//            Splitter splitter = new Splitter();
+//            Pages = splitter.split(document);
+//            Iterator<PDDocument> iterator = Pages.listIterator();
+//
+//
+//            PDDocument pd = new PDDocument();
+//            if (Pages.size() >= pageNumber) {
+//                pd = Pages.get(pageNumber - 1);
+//            } else {
+//                return ResponseEntity.badRequest().body("Не правильная страница");
+//            }
+//
+//
+//            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//            pd.save(byteArrayOutputStream);
+//
+//
+//            byte[] pdfBytes = byteArrayOutputStream.toByteArray();
+//
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.setContentType(MediaType.APPLICATION_PDF);
+//            headers.setContentDisposition(ContentDisposition.builder("inline").filename("output.pdf").build());
+//            pd.close();
+//
+//            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+//
+//
+//        } finally {
+//
+//            for (PDDocument pageDocument : Pages) {
+//                pageDocument.close();
+//            }
+//        }
+//
+//
+//    }
 //    @GetMapping("/showpdf/{pageNumber}")
 //    public ResponseEntity<?> showPdfPage2(@PathVariable int pageNumber, Model model) {
 //        byte[] imageData = new byte[0];

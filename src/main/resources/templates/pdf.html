@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,6 +18,12 @@
     </style>
 </head>
 <body>
+<div th:text="${id}" id="docId">
+
+</div>
+<div th:text="${currentPage}" id="currentPage">
+
+</div>
 <div id="pdf-container"></div>
 <div id="navigation-buttons">
   <button onclick="loadPage('previous')">Предыдущая страница</button>
@@ -24,17 +31,25 @@
 </div>
 
 <script>
-        let currentPage = 1;
+        let currentPage = document.getElementById('currentPage').innerHTML;
         const pdfContainer = document.getElementById('pdf-container');
+        const docId=document.getElementById('docId').innerHTML;
 
         function loadPage(direction) {
+            currentPage=Number(currentPage);
             if (direction === 'previous') {
                 currentPage = Math.max(1, currentPage - 1);
-            } else {
+            }
+            if (direction === 'current'){
+            }
+            else {
                 currentPage += 1;
             }
+            const currentUrl = window.location.origin;
 
-            fetch(`/pdf/${currentPage}`)
+            const pdfUrl = `${docId}/${currentPage}`;
+
+            fetch(pdfUrl)
                 .then(response => response.blob())
                 .then(blob => {
                     const url = URL.createObjectURL(blob);
