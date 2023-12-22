@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>My Bookshelf</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">My Bookshelf</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Loop through the list of books -->
+        <tr th:each="book : ${books}">
+            <td th:text="${book.id}" class="book-id"></td>
+            <td th:text="${book.title}"></td>
+            <td th:text="${book.author}"></td>
+            <td>
+                <button class="btn btn-info btn-sm details-btn" onclick="showDetailsModal(this)">Details</button>
+                <a class="btn btn-danger btn-sm" href="#" role="button">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Details Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">Book Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>ID: <span id="modalBookId"></span></p>
+                <label for="textArea">Text:</label>
+                <textarea class="form-control" id="textArea" rows="3"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="sendPostRequest()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function showDetailsModal(button) {
+        const id = button.closest('tr').querySelector('.book-id').textContent;
+        document.getElementById('modalBookId').textContent = id;
+        const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
+        modal.show();
+    }
+
+    function sendPostRequest() {
+        const id = document.getElementById('modalBookId').textContent;
+        const text = document.getElementById('textArea').value;
+
+        // Your POST request logic here using pure JavaScript, for example using fetch
+        fetch('/assertbook', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id, text }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            // Handle success as needed
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            // Handle errors as needed
+        });
+
+        // Close the modal after sending the request
+        const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
+        modal.hide();
+    }
+</script>
+</body>
+</html>

@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "bookshelves",uniqueConstraints = {@UniqueConstraint(columnNames="name")})
+@Table(name = "bookshelves")
 public class Bookshelf {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,6 +44,7 @@ public class Bookshelf {
     public void setId(Long id) {
         this.id = id;
     }
+
 
     public String getName() {
         return name;

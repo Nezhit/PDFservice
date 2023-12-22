@@ -3,7 +3,7 @@ package com.example.CodeInside.models;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "books",uniqueConstraints = {@UniqueConstraint(columnNames="title")})
+@Table(name = "books")
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

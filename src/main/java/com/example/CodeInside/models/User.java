@@ -29,6 +29,8 @@ public class User {
     private Set<Role> roles=new HashSet<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Bookshelf> bookshelves = new HashSet<>();
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
+    private Set<Request> requests = new HashSet<>();
     public User() {
     }
 
@@ -36,6 +38,30 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+    @PostPersist
+    public void onUserCreate() {
+
+        Bookshelf basicShelf = new Bookshelf();
+        basicShelf.setName("Basic Shelf");
+        basicShelf.setUser(this);
+        bookshelves.add(basicShelf);
+    }
+
+    public Set<Bookshelf> getBookshelves() {
+        return bookshelves;
+    }
+
+    public void setBookshelves(Set<Bookshelf> bookshelves) {
+        this.bookshelves = bookshelves;
+    }
+
+    public Set<Request> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(Set<Request> requests) {
+        this.requests = requests;
     }
 
     public Long getId() {

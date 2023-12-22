@@ -5,6 +5,7 @@ import com.example.CodeInside.models.Book;
 import com.example.CodeInside.service.BookService;
 import jakarta.annotation.Resource;
 import jakarta.persistence.criteria.Path;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -48,12 +49,12 @@ public class BookController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
         try {
             // Получение InputStream из MultipartFile
             //InputStream inputStream = file.getInputStream();
 
-            bookService.processBookAsync(file);
+            bookService.processBookAsync(file,request);
             System.out.println("ЗАВЕРШЕНО В КОНТРОЛЛЕРЕ");
             return ResponseEntity.ok("Файл успешно загружен");
         } catch (IOException e) {
@@ -116,6 +117,10 @@ public class BookController {
 
 
     }
+//    @PostMapping("/assertbook")
+//    public ResponseEntity<String> assertBook(){
+//        return ResponseEntity.ok("OK");
+//    }
 
 //    @GetMapping("/pdf/{pageNumber}")
 //    public ResponseEntity<?> serveFile(@PathVariable int pageNumber) throws IOException {

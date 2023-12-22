@@ -8,6 +8,7 @@ import com.example.CodeInside.pojo.BookshelfCreation;
 import com.example.CodeInside.service.BookService;
 import com.example.CodeInside.service.BookshelfService;
 import com.example.CodeInside.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,11 +35,11 @@ public class LibraryController {
     }
 
     @GetMapping("/library")
-    public String getLibrary(Model model){
-        List<Book> allBooks = bookService.getAll();
+    public String getLibrary(Model model, HttpServletRequest request){
+        List<Book> allBooks = bookService.getAll(request);
         model.addAttribute("allBooks", allBooks);
 
-        List<Bookshelf> shelves = bookshelfService.getAll();
+        List<Bookshelf> shelves = bookshelfService.getAll(request);
         model.addAttribute("shelves", shelves);
 
         // Map to store bookshelf IDs for each book

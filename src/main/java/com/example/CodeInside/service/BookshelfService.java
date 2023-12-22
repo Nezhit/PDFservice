@@ -7,6 +7,7 @@ import com.example.CodeInside.pojo.AssertBookandShelf;
 import com.example.CodeInside.pojo.BookshelfCreation;
 import com.example.CodeInside.repos.BookRepo;
 import com.example.CodeInside.repos.BookshelfRepo;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -17,10 +18,12 @@ import java.util.List;
 public class BookshelfService {
     private final BookshelfRepo bookshelfRepo;
     private final BookRepo bookRepo;
+    private final UserService userService;
 
-    public BookshelfService(BookshelfRepo bookshelfRepo, BookRepo bookRepo) {
+    public BookshelfService(BookshelfRepo bookshelfRepo, BookRepo bookRepo, UserService userService) {
         this.bookshelfRepo = bookshelfRepo;
         this.bookRepo = bookRepo;
+        this.userService = userService;
     }
 
     public ResponseEntity<String> createShelf(BookshelfCreation bookshelfCreation, User user){
@@ -28,8 +31,11 @@ public class BookshelfService {
         bookshelfRepo.save(bookshelf);
         return ResponseEntity.ok("Полка создана");
     }
-    public List<Bookshelf> getAll(){
-        return bookshelfRepo.findAll();
+    public List<Bookshelf> getAll(HttpServletRequest request){
+        User user=userService.getUserFromRequest(request);
+        //return bookshelfRepo.findAll();
+       // return user.getBookshelves().stream().toList();
+        return bookshelfRepo.findByUserId(user.getId());
     }
     public ResponseEntity<String> assertBookandShelf(AssertBookandShelf assertBookandShelf){
         Bookshelf bookshelf= bookshelfRepo.findById(assertBookandShelf.getShelfId()).orElseThrow(()->{
