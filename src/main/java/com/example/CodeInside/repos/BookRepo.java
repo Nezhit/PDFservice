@@ -14,4 +14,6 @@ public interface BookRepo extends JpaRepository<Book,Long> {
     Optional<Book> findByAuthor(String author);
     @Query("SELECT b FROM Book b WHERE b.bookshelf.user.id = :userId")
     List<Book> findByUserId(@Param("userId") Long userId);
+    @Query("SELECT b FROM Book b WHERE b.bookshelf.user.id != :userId OR b.bookshelf IS NULL")
+    List<Book> findBooksNotAssociatedWithUser(@Param("userId") Long userId);
 }

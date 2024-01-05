@@ -52,7 +52,7 @@
         <h4>Received Requests</h4>
         <div class="request-list">
             <div th:if="${not #lists.isEmpty(receivedRequests)}">
-                <div th:each="request : ${receivedRequests}" class="card request-card">
+                <div th:each="request : ${receivedRequests}" class="card request-card" th:if="${request.status == T(com.example.CodeInside.models.enums.EStatus).AWAIT}">
                     <div class="card-body">
                         <h5 class="card-title" th:text="${request.text}"></h5>
                         <p class="card-text">Status: <span th:text="${request.status}"></span></p>
@@ -61,8 +61,14 @@
                         <p class="card-text">Book title: <span th:text="${request.book.title}"></span></p>
                         <p class="card-text">Sender id: <span th:text="${request.sender.id}"></span></p>
                         <p class="card-text">Sender username: <span th:text="${request.sender.username}"></span></p>
-                        <button type="button" class="btn btn-primary" th:onclick="'sendRequest(' + ${request.id} + ')'">
-                            Send Request
+                        <button type="button" class="btn btn-success" th:onclick="'sendRequest(' + ${request.id} + ')'">
+                            Принять
+                        </button>
+                        <button type="button" class="btn btn-primary" th:onclick="'showDateModal(' + ${request.id} + ')'">
+                            Установить дату
+                        </button>
+                        <button type="button" class="btn btn-danger" th:onclick="'showDetailsModal(' + ${request.id} + ')'">
+                            Отклонить
                         </button>
                     </div>
                 </div>
@@ -73,6 +79,45 @@
         </div>
     </div>
 
+
+</div>
+<!-- Details Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">Book Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>ID: <span id="modalBookId"></span></p>
+                <label for="textArea">Причина отказа:</label>
+                <textarea class="form-control" id="textArea" rows="3"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="sendRefuseRequest()">Отказать</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Второе всплывающее окно -->
+<div class="modal fade" id="dateModal" tabindex="-1" aria-labelledby="dateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dateModalLabel">Установить дату</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>ID: <span id="modalDateId"></span></p>
+                <label for="datePicker">Дата:</label>
+                <input type="date" class="form-control" id="datePicker" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="setDate()">Установить</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Bootstrap JS и jQuery (подключаются для корректной работы Bootstrap) -->
@@ -81,6 +126,39 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
 
 <script>
+ function showDetailsModal(id) {
+
+        document.getElementById('modalBookId').textContent = id;
+        const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
+        modal.show();
+    }
+    function sendRefuseRequest() {
+        const id = document.getElementById('modalBookId').textContent;
+        const text = document.getElementById('textArea').value;
+
+        // Your POST request logic here using pure JavaScript, for example using fetch
+        fetch('/refuserequest', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id, text }),
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log('Success:', data);
+            // Handle success as needed
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            // Handle errors as needed
+        });
+
+        // Close the modal after sending the request
+        const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
+        modal.hide();
+    }
+
     function sendRequest(requestId) {
         // Выполнение POST-запроса с использованием fetch или других средств
         fetch('/acceptrequest', {
@@ -107,6 +185,40 @@
         }).catch(error => {
             console.error('Error:', error);
         });
+    }
+
+
+    function showDateModal(id) {
+        document.getElementById('modalDateId').textContent = id;
+        const dateModal = new bootstrap.Modal(document.getElementById('dateModal'));
+        dateModal.show();
+    }
+
+    function setDate() {
+        const id = document.getElementById('modalDateId').textContent;
+        const date = document.getElementById('datePicker').value;
+
+        // Your POST request logic here using pure JavaScript, for example using fetch
+        fetch('/setdate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id, date }),
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log('Success:', data);
+            // Handle success as needed
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            // Handle errors as needed
+        });
+
+        // Close the modal after sending the request
+        const dateModal = new bootstrap.Modal(document.getElementById('dateModal'));
+        dateModal.hide();
     }
 </script>
 

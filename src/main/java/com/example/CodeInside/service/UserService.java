@@ -4,10 +4,14 @@ import com.example.CodeInside.models.Book;
 import com.example.CodeInside.models.User;
 import com.example.CodeInside.repos.UserRepo;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +42,25 @@ public class UserService {
             System.out.println("User not authenticated");
         }
         return userRepo.findByUsername(username).get();
+
     }
+
+    public boolean activateUser(String code) {
+        User user =userRepo.findByActivationCode(code);
+        if(user==null){
+            return false;
+        }
+        LocalDateTime currentTime = LocalDateTime.now();
+        long hoursPassed = ChronoUnit.HOURS.between(user.getDate(), currentTime);
+        if(hoursPassed>24){
+            userRepo.delete(user);
+            return false;
+        }
+        user.setActivationCode(null);
+        userRepo.save(user);
+        return true;
+    }
+
 //    public Map<String, List<Book>> getAllUsersAndBooks(){
 //
 //    }

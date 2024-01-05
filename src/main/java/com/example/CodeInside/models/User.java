@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,6 +32,8 @@ public class User {
     private Set<Bookshelf> bookshelves = new HashSet<>();
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
     private Set<Request> requests = new HashSet<>();
+    private String activationCode;
+    private LocalDateTime date;
     public User() {
     }
 
@@ -46,6 +49,22 @@ public class User {
         basicShelf.setName("Basic Shelf");
         basicShelf.setUser(this);
         bookshelves.add(basicShelf);
+    }
+
+    public String getActivationCode() {
+        return activationCode;
+    }
+
+    public void setActivationCode(String activationCode) {
+        this.activationCode = activationCode;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
     }
 
     public Set<Bookshelf> getBookshelves() {

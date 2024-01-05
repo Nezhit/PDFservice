@@ -14,6 +14,9 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +37,7 @@ import java.util.Iterator;
 import java.util.List;
 
 @Controller
+@EnableAsync
 public class BookController {
     private final BookService bookService;
 
@@ -53,8 +57,9 @@ public class BookController {
         try {
             // Получение InputStream из MultipartFile
             //InputStream inputStream = file.getInputStream();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-            bookService.processBookAsync(file,request);
+            bookService.processBookAsync(file,request,authentication);
             System.out.println("ЗАВЕРШЕНО В КОНТРОЛЛЕРЕ");
             return ResponseEntity.ok("Файл успешно загружен");
         } catch (IOException e) {

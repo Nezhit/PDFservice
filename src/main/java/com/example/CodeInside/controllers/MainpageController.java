@@ -3,6 +3,7 @@ package com.example.CodeInside.controllers;
 import com.example.CodeInside.models.Book;
 import com.example.CodeInside.models.Request;
 import com.example.CodeInside.pojo.AssertBookRequest;
+import com.example.CodeInside.pojo.SetDateRequestDTO;
 import com.example.CodeInside.service.BookService;
 import com.example.CodeInside.service.RequestService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,8 +27,8 @@ public class MainpageController {
     }
 
     @GetMapping("/main")
-    public String getMainPage(Model model){
-        List<Book> books=bookService.getAllBooksFromAllUsers();
+    public String getMainPage(Model model, HttpServletRequest request){
+        List<Book> books=bookService.getAllBooksFromAllUsers(request);
         model.addAttribute("books",books);
         return "main";
     }
@@ -48,5 +49,13 @@ public class MainpageController {
     public ResponseEntity<String> acceptRequests(@RequestBody AssertBookRequest assertBookRequest, HttpServletRequest request){
 
         return requestService.acceptRequest(assertBookRequest);
+    }
+    @PostMapping("/refuserequest")
+    public ResponseEntity<String> refuseRequest(@RequestBody AssertBookRequest assertBookRequest){
+        return requestService.refuseRequest(assertBookRequest);
+    }
+    @PostMapping("/setdate")
+    public ResponseEntity<String> setDateBook(@RequestBody SetDateRequestDTO dateRequestDTO){
+        return requestService.setDateBook(dateRequestDTO);
     }
 }

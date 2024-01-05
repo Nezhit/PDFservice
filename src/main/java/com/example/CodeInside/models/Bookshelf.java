@@ -17,7 +17,7 @@ public class Bookshelf {
     private User user;
 
     private String name;
-    @OneToMany(mappedBy = "bookshelf", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "bookshelf", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Book> books = new HashSet<>();
 
     public Bookshelf() {

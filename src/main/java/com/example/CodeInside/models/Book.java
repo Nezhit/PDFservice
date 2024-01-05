@@ -2,6 +2,9 @@ package com.example.CodeInside.models;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "books")
 public class Book {
@@ -19,6 +22,7 @@ public class Book {
 
     @Column(name = "reading_progress")
     private int readingProgress; // Прогресс чтения (номер страницы)
+    private LocalDate deadline;
 
     public Book() {
     }
@@ -45,6 +49,14 @@ public class Book {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public LocalDate getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(LocalDate deadline) {
+        this.deadline = deadline;
     }
 
     public String getFilePath() {

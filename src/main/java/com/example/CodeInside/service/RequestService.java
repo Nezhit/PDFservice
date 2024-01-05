@@ -6,6 +6,7 @@ import com.example.CodeInside.models.Request;
 import com.example.CodeInside.models.User;
 import com.example.CodeInside.models.enums.EStatus;
 import com.example.CodeInside.pojo.AssertBookRequest;
+import com.example.CodeInside.pojo.SetDateRequestDTO;
 import com.example.CodeInside.repos.BookRepo;
 import com.example.CodeInside.repos.BookshelfRepo;
 import com.example.CodeInside.repos.RequestRepo;
@@ -66,7 +67,32 @@ public class RequestService {
         basicShelfOptional.get().addBook(book);
         bookRepo.save(book);
         bookshelfRepo.save(basicShelfOptional.get());
+        request.setStatus(EStatus.ACCEPTED);
+        requestRepo.save(request);
         return ResponseEntity.ok("Успешно");
 
+    }
+    public ResponseEntity<String> refuseRequest(AssertBookRequest assertBookRequest){
+        Request request=requestRepo.findById(assertBookRequest.getId()).get();
+        request.setStatus(EStatus.CANCELLED);
+        request.setText(assertBookRequest.getText());
+        requestRepo.save(request);
+        return ResponseEntity.ok("Отменено");
+    }
+    public ResponseEntity<String> setDateBook(SetDateRequestDTO dateRequestDTO){
+        Request request=requestRepo.findById(dateRequestDTO.getId()).get();
+        Optional<Bookshelf> basicShelfOptional = request.getSender()
+                .getBookshelves()
+                .stream()
+                .filter(bookshelf -> "Basic Shelf".equals(bookshelf.getName()))
+                .findFirst();
+        Book book=new Book(basicShelfOptional.get(),request.getBook().getTitle(),request.getBook().getAuthor(),request.getBook().getFilePath(),1);
+        book.setDeadline(dateRequestDTO.getDate());
+        basicShelfOptional.get().addBook(book);
+        bookRepo.save(book);
+        bookshelfRepo.save(basicShelfOptional.get());
+        request.setStatus(EStatus.ACCEPTED);
+        requestRepo.save(request);
+        return ResponseEntity.ok("Успешно");
     }
 }
