@@ -2,35 +2,32 @@ package com.example.CodeInside.service;
 
 import com.example.CodeInside.models.Book;
 import com.example.CodeInside.models.Bookshelf;
+import com.example.CodeInside.models.Mark;
 import com.example.CodeInside.models.User;
+import com.example.CodeInside.pojo.MarkDTO;
 import com.example.CodeInside.repos.BookRepo;
 import com.example.CodeInside.repos.BookshelfRepo;
+import com.example.CodeInside.repos.MarkRepo;
 import com.example.CodeInside.repos.UserRepo;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 public class BookService {
@@ -40,12 +37,14 @@ public class BookService {
     private final UserRepo userRepo;
     private final BookshelfRepo bookshelfRepo;
     private final UserService userService;
+    private final MarkRepo markRepo;
 
-    public BookService(BookRepo bookRepo, UserRepo userRepo, BookshelfRepo bookshelfRepo, UserService userService) {
+    public BookService(BookRepo bookRepo, UserRepo userRepo, BookshelfRepo bookshelfRepo, UserService userService, MarkRepo markRepo) {
         this.bookRepo = bookRepo;
         this.userRepo = userRepo;
         this.bookshelfRepo = bookshelfRepo;
         this.userService = userService;
+        this.markRepo = markRepo;
     }
 
     @Async
@@ -148,6 +147,21 @@ public class BookService {
                 bookRepo.delete(book);
             }
         }
+    }
+    public ResponseEntity<String> appointMark(MarkDTO markDTO){
+        Mark mark = new Mark();
+
+        Book book = getBookById(markDTO.getDocId());
+        mark.setBook(book);
+        book.addBookmark(mark);
+        mark.setPageNumber(markDTO.getCurrentPage());
+        bookRepo.save(book);
+        markRepo.save(mark);
+        return ResponseEntity.ok("Закладка добавлена");
+
+    }
+    public List<Mark> getMarksByBookId(Long id){
+        return markRepo.findByBookId(id);
     }
 
 }

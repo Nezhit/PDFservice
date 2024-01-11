@@ -2,58 +2,43 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
     <title>Spring Security Example </title>
+    <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
-<body>
-<div th:if="${param.error}">
+<body class="container mt-5">
+
+<div th:if="${param.error}" class="alert alert-danger">
     Invalid username and password.
 </div>
-<div th:if="${param.logout}">
+<div th:if="${param.logout}" class="alert alert-success">
     You have been logged out.
 </div>
-<div th:if="${error}" >
+<div th:if="${error}" class="alert alert-danger">
     <span th:text="${error}"></span>
 </div>
-<div th:if="${param.error}">
+<div th:if="${param.error}" class="alert alert-danger">
     <div th:text="${session.error}">Error message</div>
 </div>
 
 <form th:action="@{/login}" method="post">
-    <div><label> User Name : <input type="text" name="username"/> </label></div>
-    <div><label> Password: <input type="password" name="password"/> </label></div>
-    <div><input type="submit" value="Sign In"/></div>
+    <div class="form-group">
+        <label for="username">User Name:</label>
+        <input type="text" name="username" class="form-control"/>
+    </div>
+    <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" name="password" class="form-control"/>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Sign In" class="btn btn-primary"/>
+    </div>
 </form>
-<!--
-<form id="signin-form">
-    <div><label> User Name : <input type="text" name="username"/> </label></div>
-    <div><label> Password: <input type="password" name="password"/> </label></div>
-    <div><input type="button" value="Sign In" onclick="signIn()"/></div>
-</form>
-<script>
-    function signIn() {
-        var username = document.getElementsByName("username")[0].value;
-        var password = document.getElementsByName("password")[0].value;
+<a href="/register" class="btn btn-secondary">Регистрация</a>
 
-        var xhr = new XMLHttpRequest();
-        var url = "/api/auth/signin";
+<!-- Add Bootstrap JS and Popper.js (required for some Bootstrap features) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-        xhr.open("POST", url, true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                // Обработка успешного ответа
-                var response = JSON.parse(xhr.responseText);
-                console.log(response);
-            } else if (xhr.readyState === 4) {
-                // Обработка ошибки
-                console.error("Error during sign in");
-            }
-        };
-
-        var data = JSON.stringify({ username: username, password: password });
-        xhr.send(data);
-    }
-</script>
--->
 </body>
 </html>

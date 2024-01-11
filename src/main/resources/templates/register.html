@@ -4,26 +4,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registration Form</title>
+  <!-- Add Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
-<body>
+<body class="container mt-5">
+
 <h2>Registration Form</h2>
 <form action="/api/auth/signup" method="post">
-  <label for="username">Username:</label>
-  <input type="text" id="username" name="username" required>
-  <br>
+  <div class="form-group">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" class="form-control" required>
+  </div>
 
-  <label for="email">Email:</label>
-  <input type="email" id="email" name="email" required>
-  <br>
+  <div class="form-group">
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" class="form-control" required>
+  </div>
 
-  <label for="password">Password:</label>
-  <input type="password" id="password" name="password" required>
-  <br>
-  <div class="g-recaptcha" data-sitekey="6Lej_jkpAAAAAGXt4uA7nOWQ0UehNgI25ucM0qs6"></div>
-  <br>
-  <input type="submit" value="Register">
+  <div class="form-group">
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" class="form-control" required>
+  </div>
+
+  <div class="form-group">
+    <div class="g-recaptcha" data-sitekey="6Lej_jkpAAAAAGXt4uA7nOWQ0UehNgI25ucM0qs6"></div>
+  </div>
+
+  <div class="form-group">
+    <input type="submit" value="Register" class="btn btn-primary">
+  </div>
 </form>
+
+<!-- Add Bootstrap JS and Popper.js (required for some Bootstrap features) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </body>
 </html>

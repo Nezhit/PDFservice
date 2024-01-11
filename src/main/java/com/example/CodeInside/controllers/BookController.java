@@ -2,6 +2,8 @@ package com.example.CodeInside.controllers;
 
 
 import com.example.CodeInside.models.Book;
+import com.example.CodeInside.models.Mark;
+import com.example.CodeInside.pojo.MarkDTO;
 import com.example.CodeInside.service.BookService;
 import jakarta.annotation.Resource;
 import jakarta.persistence.criteria.Path;
@@ -19,10 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -74,6 +73,8 @@ public class BookController {
         model.addAttribute("id",id);
         int currentPage=bookService.getReadingProgress((long) id);
         model.addAttribute("currentPage",currentPage);
+        List<Mark> marks=bookService.getMarksByBookId((long)id);
+        model.addAttribute("marks",marks);
         return "pdf";
     }
     @GetMapping("/pdf/{bookId}/{pageNumber}")
@@ -121,6 +122,11 @@ public class BookController {
         }
 
 
+    }
+    @PostMapping("/appointmark")
+    public ResponseEntity<String> appointMark(@RequestBody MarkDTO markDTO){
+
+        return bookService.appointMark(markDTO);
     }
 //    @PostMapping("/assertbook")
 //    public ResponseEntity<String> assertBook(){

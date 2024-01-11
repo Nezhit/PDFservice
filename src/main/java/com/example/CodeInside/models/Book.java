@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "books")
@@ -23,7 +25,8 @@ public class Book {
     @Column(name = "reading_progress")
     private int readingProgress; // Прогресс чтения (номер страницы)
     private LocalDate deadline;
-
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Mark> bookmarks = new HashSet<>();
     public Book() {
     }
 
@@ -97,5 +100,16 @@ public class Book {
 
     public void setReadingProgress(int readingProgress) {
         this.readingProgress = readingProgress;
+    }
+
+    public Set<Mark> getBookmarks() {
+        return bookmarks;
+    }
+
+    public void setBookmarks(Set<Mark> bookmarks) {
+        this.bookmarks = bookmarks;
+    }
+    public void addBookmark(Mark mark){
+        this.bookmarks.add(mark);
     }
 }

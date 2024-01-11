@@ -23,11 +23,21 @@
 </div>
 <div th:text="${currentPage}" id="currentPage">
 
+
+</div>
+<!-- Контейнер для отображения закладок -->
+<div id="bookmark-container">
+  <!-- Thymeleaf цикл для отображения списка закладок -->
+  <div th:each="mark : ${marks}">
+    <!-- Создаем элемент, на который можно нажать, например, кнопку -->
+    <button th:text="'Закладка ' + ${mark.pageNumber}" th:onclick="'loadMarkPage(' + ${mark.pageNumber} + ')'">Закладка ${mark.pageNumber}</button>
+  </div>
 </div>
 <div id="pdf-container"></div>
 <div id="navigation-buttons">
   <button onclick="loadPage('previous')">Предыдущая страница</button>
   <button onclick="loadPage('next')">Следующая страница</button>
+  <button onclick="updatePage()">★</button>
 </div>
 
 <script>
@@ -39,8 +49,9 @@
             currentPage=Number(currentPage);
             if (direction === 'previous') {
                 currentPage = Math.max(1, currentPage - 1);
+
             }
-            if (direction === 'current'){
+            else if (direction === 'current'){
             }
             else {
                 currentPage += 1;
@@ -57,6 +68,43 @@
                 })
                 .catch(error => console.error('Error loading PDF:', error));
         }
+        function updatePage() {
+    const postData = {
+      docId: docId,
+      currentPage: currentPage
+    };
+
+    fetch('/appointmark', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(postData)
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Page updated successfully:', data);
+      })
+      .catch(error => console.error('Error updating page:', error));
+  }
+
+// Добавляем функцию для загрузки страницы по номеру
+    function loadMarkPage(pageNumber) {
+      const pdfUrl = `${docId}/${pageNumber}`;
+
+      fetch(pdfUrl)
+        .then(response => response.blob())
+        .then(blob => {
+          const url = URL.createObjectURL(blob);
+          pdfContainer.innerHTML = `<embed src="${url}" type="application/pdf" width="100%" height="100%">`;
+        })
+        .catch(error => console.error('Error loading PDF:', error));
+    }
 
         // Load initial page
         loadPage('current');
